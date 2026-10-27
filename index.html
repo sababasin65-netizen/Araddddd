@@ -1,2 +1,157 @@
-<h1>سلام! من آراد هستم</h1>
-<p>این اولین صفحه وب من است.</p>
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه آراد و شمارش معکوس</title>
+
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #f3e8ff);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            color: #334155;
+        }
+
+        .card {
+            max-width: 430px;
+            margin: 20px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px #00000015;
+        }
+
+        h1 {
+            color: #6d28d9;
+            font-size: 24px;
+        }
+
+        p {
+            line-height: 2;
+        }
+
+        label {
+            display: block;
+            text-align: right;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        input, button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        input {
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+        }
+
+        button {
+            margin-top: 20px;
+            border: none;
+            background: #7c3aed;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f3e8ff;
+            border-radius: 10px;
+            line-height: 2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- بخش اول: معرفی آراد -->
+    <section class="card">
+        <h1>سلام، من آراد هستم! 👋</h1>
+        <p>به اولین صفحه وب من خوش آمدید.</p>
+    </section>
+
+    <!-- بخش دوم: شمارش معکوس -->
+    <section class="card">
+        <h1>🎉 چند روز تا روز بزرگ؟</h1>
+        <p>نام رویداد و تاریخ آن را وارد کن.</p>
+
+        <form id="eventForm">
+            <label for="eventName">نام رویداد:</label>
+            <input id="eventName" type="text"
+                   placeholder="مثلاً تولدم" required>
+
+            <label for="eventDate">تاریخ رویداد:</label>
+            <input id="eventDate" type="date" required>
+
+            <button type="submit">محاسبه</button>
+        </form>
+
+        <div id="result" aria-live="polite">
+            <h3 id="resultTitle"></h3>
+            <p id="resultMessage"></p>
+        </div>
+    </section>
+
+    <script>
+        const form = document.getElementById("eventForm");
+        const nameInput = document.getElementById("eventName");
+        const dateInput = document.getElementById("eventDate");
+        const result = document.getElementById("result");
+        const resultTitle = document.getElementById("resultTitle");
+        const resultMessage = document.getElementById("resultMessage");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = nameInput.value.trim();
+            const parts = dateInput.value.split("-").map(Number);
+
+            const eventDay = Date.UTC(
+                parts[0], parts[1] - 1, parts[2]
+            );
+
+            const today = new Date();
+
+            const todayDay = Date.UTC(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
+
+            const difference = Math.round(
+                (eventDay - todayDay) / 86400000
+            );
+
+            result.style.display = "block";
+
+            if (difference > 0) {
+                resultTitle.textContent = "⏳ شمارش معکوس!";
+                resultMessage.textContent =
+                    `تا ${name}، ${difference} روز باقی مانده است.`;
+            } else if (difference === 0) {
+                resultTitle.textContent = "🎉 روز بزرگ فرا رسیده!";
+                resultMessage.textContent =
+                    `امروز روز ${name} است.`;
+            } else {
+                resultTitle.textContent = "📅 این روز گذشته است!";
+                resultMessage.textContent =
+                    `${name}، ${Math.abs(difference)} روز پیش بود.`;
+            }
+        });
+    </script>
+
+</body>
+</html>
