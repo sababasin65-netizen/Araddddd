@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>چند روز تا روز بزرگ؟</title>
+
+    <style>
+        /* تنظیمات کلی صفحه */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #f3e8ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* کارت اصلی برنامه */
+        .container {
+            width: 100%;
+            max-width: 430px;
+            background-color: white;
+            padding: 28px 22px;
+            border-radius: 22px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #6d28d9;
+            font-size: 25px;
+            line-height: 1.8;
+            margin-top: 0;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 2;
+            margin-bottom: 25px;
+        }
+
+        /* عنوان فیلدها */
+        label {
+            display: block;
+            text-align: right;
+            margin: 16px 0 8px;
+            color: #334155;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* کادرهای ورودی */
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            background-color: #f8fafc;
+        }
+
+        input:focus {
+            outline: 2px solid #a78bfa;
+            border-color: #7c3aed;
+        }
+
+        /* دکمه محاسبه */
+        button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background-color: #7c3aed;
+            color: white;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #6d28d9;
+        }
+
+        /* محل نمایش نتیجه */
+        #result {
+            display: none;
+            margin-top: 22px;
+            padding: 18px 12px;
+            border-radius: 12px;
+            background-color: #f3e8ff;
+            color: #581c87;
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
+
+        #result h2 {
+            font-size: 18px;
+            margin: 0 0 8px;
+        }
+
+        #result p {
+            margin: 0;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>🎉 چند روز تا روز بزرگ؟</h1>
+
+        <p class="description">
+            برای روزهای خاص زندگی‌ات شمارش معکوس بساز!
+        </p>
+
+        <form id="eventForm">
+
+            <label for="eventName">نام رویداد:</label>
+            <input
+                type="text"
+                id="eventName"
+                placeholder="مثلاً تولدم"
+                required
+            >
+
+            <label for="eventDate">تاریخ رویداد:</label>
+            <input
+                type="date"
+                id="eventDate"
+                required
+            >
+
+            <button type="submit">محاسبه</button>
+
+        </form>
+
+        <section id="result" aria-live="polite">
+            <h2 id="resultTitle"></h2>
+            <p id="resultMessage"></p>
+        </section>
+
+    </main>
+
+    <script>
+        // گرفتن عناصر صفحه
+        const eventForm = document.getElementById("eventForm");
+        const eventName = document.getElementById("eventName");
+        const eventDate = document.getElementById("eventDate");
+
+        const result = document.getElementById("result");
+        const resultTitle = document.getElementById("resultTitle");
+        const resultMessage = document.getElementById("resultMessage");
+
+        // اجرای برنامه هنگام زدن دکمه محاسبه
+        eventForm.addEventListener("submit", function(event) {
+
+            // جلوگیری از بارگذاری دوباره صفحه
+            event.preventDefault();
+
+            // گرفتن نام و تاریخ رویداد
+            const name = eventName.value.trim();
+            const dateValue = eventDate.value;
+
+            // اگر نام یا تاریخ وارد نشده باشد
+            if (name === "" || dateValue === "") {
+                return;
+            }
+
+            // جدا کردن سال، ماه و روز تاریخ انتخاب‌شده
+            const parts = dateValue.split("-").map(Number);
+
+            const eventDay = Date.UTC(
+                parts[0],
+                parts[1] - 1,
+                parts[2]
+            );
+
+            // گرفتن تاریخ امروز بر اساس تقویم محلی دستگاه
+            const today = new Date();
+
+            const todayDay = Date.UTC(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
+
+            // محاسبه اختلاف روزها
+            const difference = Math.round(
+                (eventDay - todayDay) / (1000 * 60 * 60 * 24)
+            );
+
+            // نمایش نتیجه
+            result.style.display = "block";
+
+            if (difference > 0) {
+
+                resultTitle.textContent = "⏳ شمارش معکوس!";
+                resultMessage.textContent =
+                    `تا ${name}، ${difference} روز باقی مانده است.`;
+
+            } else if (difference === 0) {
+
+                resultTitle.textContent = "🎉 روز بزرگ فرا رسیده!";
+                resultMessage.textContent =
+                    `امروز روز ${name} است. از این روز لذت ببر!`;
+
+            } else {
+
+                resultTitle.textContent = "📅 این روز گذشته است!";
+                resultMessage.textContent =
+                    `${name}، ${Math.abs(difference)} روز پیش بود.`;
+
+            }
+
+        });
+    </script>
+
+</body>
+</html>
